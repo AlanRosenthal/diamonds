@@ -2,12 +2,14 @@ import sqlite3
 
 DB_PATH = "store.db"
 
+
 def insert_unique_data(upc, shape, price, carat, clarity, cut, color):
     con = db_connect()
     cur = con.cursor()
 
     # Create table if it doesnt
-    cur.execute("""
+    cur.execute(
+        """
     CREATE TABLE IF NOT EXISTS brilliant_earth (
         upc text PRIMARY KEY,
         shape text,
@@ -15,21 +17,27 @@ def insert_unique_data(upc, shape, price, carat, clarity, cut, color):
         carat text,
         clarity text,
         cut text,
-        color text)""")
+        color text)"""
+    )
 
-    cur.execute(f"""
+    cur.execute(
+        f"""
     INSERT OR IGNORE INTO brilliant_earth VALUES ("{upc}", "{shape}", "{price}", "{carat}", "{clarity}", "{cut}", "{color}")
-    """)
-    
+    """
+    )
+
     con.commit()
     con.close()
+
 
 def count_entries():
     con = db_connect()
     cur = con.cursor()
 
-    cur.execute("""
-    SELECT * FROM brilliant_earth""")
+    cur.execute(
+        """
+    SELECT * FROM brilliant_earth"""
+    )
 
     rows = cur.fetchall()
 
@@ -38,12 +46,15 @@ def count_entries():
 
     return len(rows)
 
+
 def query_db():
     con = db_connect()
     cur = con.cursor()
 
-    cur.execute("""
-    SELECT * FROM brilliant_earth""")
+    cur.execute(
+        """
+    SELECT * FROM brilliant_earth"""
+    )
 
     rows = cur.fetchall()
     for row in rows:
@@ -51,6 +62,7 @@ def query_db():
 
     con.commit()
     con.close()
+
 
 def db_connect():
     con = sqlite3.connect(DB_PATH)
