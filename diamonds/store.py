@@ -13,8 +13,8 @@ def insert_unique_data(upc, shape, price, carat, clarity, cut, color):
     CREATE TABLE IF NOT EXISTS brilliant_earth (
         upc text PRIMARY KEY,
         shape text,
-        price text,
-        carat text,
+        price double,
+        carat double,
         clarity text,
         cut text,
         color text)"""
@@ -47,23 +47,35 @@ def count_entries():
     return len(rows)
 
 
-def query_db():
+def query_db(carat_min, carat_max, shape, color, clarity, cut):
     con = db_connect()
     cur = con.cursor()
 
+    color_sql = ",".join([f"\"{c}\"" for c in color])
+    clarity_sql = ",".join([f"\"{c}\"" for c in clarity])
+    cut_sql = ",".join([f"\"{c}\"" for c in cut])
+
     cur.execute(
-        """
-    SELECT * FROM brilliant_earth"""
+        f"""
+    SELECT * FROM brilliant_earth
+    WHERE
+        carat >= {carat_min} and
+        carat <= {carat_max} and
+        shape = \"{shape}\" and
+        color in ({color_sql}) and
+        clarity in ({clarity_sql}) and
+        cut in ({cut_sql})
+    ORDER BY price asc
+    """
     )
 
     rows = cur.fetchall()
-    for row in rows:
-        print(row)
 
     con.commit()
     con.close()
+    
+    return rows
 
 
-def db_connect():
-    con = sqlite3.connect(DB_PATH)
-    return con
+def db_connect(db_file=DB_PATH):
+    return sqlite3.connect(db_file)
