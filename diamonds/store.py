@@ -51,9 +51,9 @@ def query_db(carat_min, carat_max, shape, color, clarity, cut):
     con = db_connect()
     cur = con.cursor()
 
-    color_sql = ",".join([f"\"{c}\"" for c in color])
-    clarity_sql = ",".join([f"\"{c}\"" for c in clarity])
-    cut_sql = ",".join([f"\"{c}\"" for c in cut])
+    color_sql = ",".join([f'"{c}"' for c in color])
+    clarity_sql = ",".join([f'"{c}"' for c in clarity])
+    cut_sql = ",".join([f'"{c}"' for c in cut])
 
     cur.execute(
         f"""
@@ -73,7 +73,7 @@ def query_db(carat_min, carat_max, shape, color, clarity, cut):
 
     con.commit()
     con.close()
-    
+
     return rows
 
 
