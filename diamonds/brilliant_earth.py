@@ -7,7 +7,7 @@ import json
 import diamonds.store
 
 
-def generate_url(page=1, color="J,F,G,I,E,D,H", sort_by="asc"):
+def generate_url(page=1, color="D,E,F,G,H,I,J", sort_by="asc"):
     BASE_URL = "https://www.brilliantearth.com/loose-diamonds/list/?"
     params = {
         "row": "0",
@@ -34,8 +34,9 @@ def query(page, color, sort_by):
         return []
 
 
-def download(start, end, color, sort_by):
-    for page in range(start, end):
+def download(page_start, page_end, color, sort_by):
+    for page in range(page_start, page_end):
+        db_count_before = diamonds.store.count_entries()
         data = query(page, color, sort_by)
         print("Total entries downloaded (page: {}): {}".format(page, len(data)))
         for diamond in data:
@@ -48,4 +49,9 @@ def download(start, end, color, sort_by):
                 diamond["cut"],
                 diamond["color"],
             )
-        print("Total entries in DB: {}".format(diamonds.store.count_entries()))
+        db_count_after = diamonds.store.count_entries()
+        print(
+            "Total entries in DB: {DB_COUNT}, new entries: {DELTA}".format(
+                DB_COUNT=db_count_after, DELTA=db_count_after - db_count_before
+            )
+        )
