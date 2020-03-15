@@ -3,10 +3,7 @@ import sqlite3
 DB_PATH = "store.db"
 
 
-def insert_unique_data(upc, shape, price, carat, clarity, cut, color):
-    con = db_connect()
-    cur = con.cursor()
-
+def create_table(cur):
     # Create table if it doesnt
     cur.execute(
         """
@@ -19,6 +16,12 @@ def insert_unique_data(upc, shape, price, carat, clarity, cut, color):
         cut text,
         color text)"""
     )
+
+def insert_unique_data(upc, shape, price, carat, clarity, cut, color):
+    con = db_connect()
+    cur = con.cursor()
+
+    create_table(cur)
 
     cur.execute(
         f"""
@@ -33,6 +36,8 @@ def insert_unique_data(upc, shape, price, carat, clarity, cut, color):
 def count_entries():
     con = db_connect()
     cur = con.cursor()
+
+    create_table(cur)
 
     cur.execute(
         """
@@ -54,6 +59,8 @@ def query_db(carat_min, carat_max, shape, color, clarity, cut, price_min, price_
     color_sql = ",".join([f'"{c}"' for c in color])
     clarity_sql = ",".join([f'"{c}"' for c in clarity])
     cut_sql = ",".join([f'"{c}"' for c in cut])
+
+    create_table(cur)
 
     cur.execute(
         f"""
