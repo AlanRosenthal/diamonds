@@ -47,7 +47,7 @@ def count_entries():
     return len(rows)
 
 
-def query_db(carat_min, carat_max, shape, color, clarity, cut):
+def query_db(carat_min, carat_max, shape, color, clarity, cut, price_min, price_max):
     con = db_connect()
     cur = con.cursor()
 
@@ -64,7 +64,9 @@ def query_db(carat_min, carat_max, shape, color, clarity, cut):
         shape = \"{shape}\" and
         color in ({color_sql}) and
         clarity in ({clarity_sql}) and
-        cut in ({cut_sql})
+        cut in ({cut_sql}) and
+        price >= {price_min} and
+        price <= {price_max}
     ORDER BY price asc
     """
     )

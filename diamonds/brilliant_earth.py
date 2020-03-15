@@ -7,25 +7,25 @@ import json
 import diamonds.store
 
 
-def generate_url(page=1, color="D,E,F,G,H,I,J", sort_by="asc"):
+def generate_url(page=1, color="D,E,F,G,H,I,J", sort_by="asc", shape="All", clarity="SI2,SI1,VS2,VS1,VVS2,VVS1,IF,FL"):
     BASE_URL = "https://www.brilliantearth.com/loose-diamonds/list/?"
     params = {
         "row": "0",
         "page": f"{page}",
         "requestedDataSize": "200",
-        "shapes": "All",
+        "shapes": f"{shape}",
         "order_by": "price",
         "order_method": f"{sort_by}",
         "currency": "$",
         "cuts": "Fair,Good,Very Good,Ideal,Super Ideal",
         "colors": f"{color}",
-        "clarities": "SI2,SI1,VS2,VS1,VVS2,VVS1,IF,FL",
+        "clarities": f"{clarity}",
     }
     return BASE_URL + urllib.parse.urlencode(params)
 
 
-def query(page, color, sort_by):
-    req = urllib.request.Request(generate_url(page, color, sort_by))
+def query(page, color, sort_by, shape, clarity):
+    req = urllib.request.Request(generate_url(page, color, sort_by, shape, clarity))
     with urllib.request.urlopen(req) as response:
         raw_data = response.read()
         json_data = json.loads(raw_data.decode("utf-8"))
@@ -34,10 +34,10 @@ def query(page, color, sort_by):
         return []
 
 
-def download(page_start, page_end, color, sort_by):
+def download(page_start, page_end, color, sort_by, shape, clarity):
     for page in range(page_start, page_end):
         db_count_before = diamonds.store.count_entries()
-        data = query(page, color, sort_by)
+        data = query(page, color, sort_by, shape, clarity)
         print("Total entries downloaded (page: {}): {}".format(page, len(data)))
         for diamond in data:
             diamonds.store.insert_unique_data(
